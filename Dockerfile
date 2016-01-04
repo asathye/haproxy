@@ -5,29 +5,19 @@
 #
 
 # Pull base image.
-FROM dockerfile/ubuntu
+FROM dockerhub.ccg21.dev.paypalcorp.com/paas/ppsb-extra
 
 # Install Haproxy.
-RUN \
-  sed -i 's/^# \(.*-backports\s\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get install -y haproxy=1.5.3-1~ubuntu14.04.1 && \
-  sed -i 's/^ENABLED=.*/ENABLED=1/' /etc/default/haproxy && \
-  rm -rf /var/lib/apt/lists/*
-
+RUN  rpm -ivh http://yumrepolvs01.qa.paypal.com/5.9/nonprod/extras/haproxy-1.5.12-0.pp.el5.x86_64.rpm
 # Add files.
-ADD haproxy.cfg /etc/haproxy/haproxy.cfg
 ADD start.bash /haproxy-start
 
 # Define mountable directories.
 VOLUME ["/haproxy-override"]
 
 # Define working directory.
-WORKDIR /etc/haproxy
+WORKDIR /
 
 # Define default command.
 CMD ["bash", "/haproxy-start"]
 
-# Expose ports.
-EXPOSE 80
-EXPOSE 443

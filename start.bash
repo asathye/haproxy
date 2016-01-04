@@ -26,4 +26,15 @@ if [[ -f "$OVERRIDE/$CONFIG" ]]; then
   ln -s "$OVERRIDE/$CONFIG" "$CONFIG"
 fi
 
-exec haproxy -f /etc/haproxy/haproxy.cfg -p "$PIDFILE"
+#handle standard interupts
+trap "service haproxy reload" SIGHUP SIGUSR1
+trap "service haproxy stop; exit 0" SIGTERM
+
+service haproxy start
+
+while :
+do
+    read inp
+    echo $inp > /dev/null
+done
+
